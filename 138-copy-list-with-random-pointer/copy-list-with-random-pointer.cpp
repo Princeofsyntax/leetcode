@@ -16,23 +16,41 @@ public:
 
 class Solution {
 public:
-    Node* helper(Node*&head, unordered_map<Node*, Node*>&mp){
-        if(head == 0) return 0;
-        
-        //solve one case and recursion
-        Node*newHead = new Node(head->val);
-        mp[head]= newHead; //mapping
-        newHead->next = helper(head->next, mp);
-        //till here linear list copy is made, random pointing is left
-        
-        if(head->random){
-            newHead->random = mp[head->random];
-        }
-        return newHead; 
-    }
+   
 
     Node* copyRandomList(Node* head) {
-        unordered_map<Node*,Node*>mp; //to store old and new nodes for mapping to use while random connections
-        return helper(head, mp);
+       if(head==0) return 0;
+
+       //step1: clone A->A'
+       Node* it = head; //iterate over old head
+
+       while(it){
+           //cloning nodes
+           Node* cloneNode = new Node(it->val);
+           cloneNode->next = it->next;
+           it->next = cloneNode;
+           it = it->next->next;
+       }
+
+       //step2: We have to assign random pointing on cloneNodes using oldNodes
+       it = head;
+       while(it){
+           Node* cloneNode = it->next;
+           cloneNode->random = it->random ? it->random->next : nullptr; //nullptr means NULL //if case used here
+           it = it->next->next;
+       }
+
+       //step3: Detach A and A'
+       it = head;
+       Node* cloneHead = it->next;
+       while(it){
+           Node* cloneNode = it->next;
+           it->next = it->next->next;
+           if(cloneNode->next){
+               cloneNode->next = cloneNode->next->next;
+           }
+           it=it->next;
+       }
+       return cloneHead;
     }
 };
