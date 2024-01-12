@@ -1,26 +1,26 @@
 class Solution {
 public:
-    string removeDuplicates(string s) {
-    string ans=""; //empty string
-    int i=0;
-    while (i<s.length())
+    string removeDuplicates(string s) 
     {
-        if (ans.length()>0)
+        stack<char> st;
+        for(auto ch : s)
         {
-            if (ans[ans.length()-1]==s[i])
+            if( !st.empty() && st.top() == ch)
             {
-                ans.pop_back();
+                st.pop(); //to remove paired characters
             }
-            else{
-                ans.push_back(s[i]);
-            }  
+            else
+            {
+                st.push(ch);
+            }
         }
-        else{
-            ans.push_back(s[i]);
+        string ans;
+        while(!st.empty()){
+            ans += st.top();
+            st.pop();
         }
-        
-        i++;
-    }
-    return ans; 
-    }
+        //as stack provide reverse order therefore we will reverse again and then return
+        reverse(ans.begin(), ans.end());
+        return ans;
+    } 
 };
