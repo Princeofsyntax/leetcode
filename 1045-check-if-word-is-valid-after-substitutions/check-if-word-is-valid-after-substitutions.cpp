@@ -1,18 +1,38 @@
 class Solution {
 public:
     bool isValid(string s) {
-        int fnd = s.find("abc");
-        if(s.size() == 0){
-            return true;
-        }
-        if(fnd != string::npos)//npos means not a position 
-        {
-            //means string is found
-            string tleft = s.substr(0, fnd); //upto fnd count //indexing is from 0 
-            string tright = s.substr(fnd+3, s.size()); //because abc length is 3
-            return isValid(tleft + tright);
-        }
-        return false;
-
+       if(s[0] != 'a'){
+           return false;
+       }
+       stack<char> st;
+       for(char ch:s){
+           if(ch == 'a'){
+               st.push(ch);
+           }
+           else if(ch == 'b'){
+               if(!st.empty() && st.top() == 'a'){
+                   st.push(ch);
+               }
+               else{
+                   return false;
+               }
+           }
+           else{
+               //ch == 'c'
+               if(!st.empty() && st.top() == 'b'){
+                   st.pop();
+                   if(!st.empty() && st.top() == 'a'){
+                       st.pop();
+                   }
+                   else{
+                       return false;
+                   }
+               }
+               else{
+                   return false;
+               }
+           }
+       }
+     return st.empty(); //as st.empty() returns true or false
     }
 };
