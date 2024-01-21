@@ -30,11 +30,9 @@ public:
             return NULL;
         }
         else if(leftAns != NULL && rightAns == NULL){
-            //both p and q are in left
             return leftAns;
         }
         else if(leftAns==NULL && rightAns != NULL){
-            //both p and q are in right
             return rightAns;
         }
         else{
