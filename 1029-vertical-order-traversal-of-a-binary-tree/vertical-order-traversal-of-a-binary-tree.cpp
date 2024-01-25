@@ -16,7 +16,7 @@ public:
 
         queue<pair<TreeNode*,pair<int,int>>>q; //Node, {row,col}
         q.push({root,{0,0}});
-        //create a Multi-Map
+        //create a Multi-Map -->map stores key in sorted form-->we will use to store w.r.t column
         map<int,map<int,multiset<int>>>mp; //col -> {row: [x,y,x...]}
         //multiSet is used so that same values also get stored and multiSet stores them in sorted order
 
