@@ -11,38 +11,23 @@
  */
 class Solution {
 public:
+    bool balanced = true;
+
     int height(TreeNode* root){
-        //base case
-        if(root == NULL){
-            return 0;
+        if(!root) return 0;
+
+        int lh = height(root->left);
+        int rh = height(root->right);
+        
+        //check for current node, isBalanced -->during recursion of height
+        if(balanced && abs(lh-rh) > 1){
+            balanced = false;
         }
-        int leftHeight = height(root->left);
-        int rightHeight = height(root->right);
-        int ans = 1 + max(leftHeight , rightHeight);
-        return ans;
+        return max(lh,rh) + 1;
     }
 
     bool isBalanced(TreeNode* root) {
-        //base case
-        if(root == NULL){
-            return true;
-        }
-        //1 case solving
-        int leftHeight = height(root->left);
-        int rightHeight = height(root->right);
-        int diff = abs(leftHeight - rightHeight);
-
-        bool ans1 = (diff <= 1); 
-          
-        //recursion
-        bool leftAns = isBalanced(root->left);
-        bool rightAns = isBalanced(root->right);
-
-        if(ans1 && leftAns && rightAns){
-            return true;
-        }
-        else{
-            return false;
-        }
+        height(root);
+        return balanced;
     }
 };
