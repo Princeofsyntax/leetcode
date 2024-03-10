@@ -1,53 +1,73 @@
+class Node{
+public:
+    char data;
+    int count;
+    Node(char d, int c){
+       data = d;
+       count = c;
+    }
+};
+
+class compare{
+public:
+    bool operator()(Node a, Node b){
+        return a.count < b.count;
+    }
+};
+
 class Solution {
 public:
     string reorganizeString(string s) {
-        int hash[26] = {0};
+     //map each character with its occurence(frequency)
+     //create maxHeap of frequency and always take 2 element at a time to create ans (so that no adjacent element are same)
+     //follow the step until the maxHeap become empty
 
-    for (int i = 0; i < s.size(); i++)
-    {
-        hash[s[i] - 'a']++; // s[0]=a therefore at start the index is hash[0] and then 1,2,3,..
-    }
+     //create map
+     int freq[26] = {0};
+     for(int i = 0; i< s.length(); i++){
+         char ch = s[i];
+         freq[ch - 'a']++;  //maps to indices
+     }
+     
+     priority_queue<Node, vector<Node>, compare>maxHeap;
 
-    // find the most frequent character
-    char most_freq_char;
-    int max_freq = INT_MIN;
-    for (int i = 0; i < 26; i++)
-    {
-        if (hash[i] > max_freq)
-        {
-            max_freq = hash[i];
-            most_freq_char = i + 'a';  //so that it mapps with characters
+     for(int i = 0; i<26; i++){
+         if(freq[i] != 0){
+             Node temp( i+'a', freq[i]);
+             maxHeap.push(temp);
+         }
+     }
+     string ans = "";
+     while(maxHeap.size() > 1){
+         //greater than 1 is used because we are fetching 2 elements at a time
+         Node first = maxHeap.top();
+         maxHeap.pop();
+         Node second = maxHeap.top();
+         maxHeap.pop();
+
+         ans += first.data;
+         ans += second.data;
+         first.count--;
+         second.count--;
+
+         if(first.count != 0){
+             maxHeap.push(first);
+         }
+         if(second.count != 0){
+             maxHeap.push(second);
+         }
+     }
+     if(maxHeap.size()==1){
+         //one element is left behind
+         Node temp = maxHeap.top();
+         maxHeap.pop();
+        if(temp.count == 1){
+           ans += temp.data;
         }
-        
-    }
-    int index = 0;
-    while (max_freq > 0 && index < s.size())
-    {
-        s[index] = most_freq_char;
-        max_freq--;
-        index += 2;  //so that characters are placed after one gap
-    }
-    
-    //if not able to fill all most_freq_char
-    if (max_freq != 0)
-    {
-        return ""; //null string
-    }
-    
-    hash[most_freq_char - 'a'] = 0; //when all mostly occurred character is placed after gap
-
-    //let's place rest of the characters
-    for (int i = 0; i < 26; i++)
-    {
-        while (hash[i] > 0)
-        {
-            index = index >= s.size() ? 1 : index; //if index >= s.size() then we will make index as 1 else the index will remain what it is
-            s[index] = i + 'a'; //to get character
-            hash[i]--;
-            index += 2;
+        else{
+            return "";
         }
-        
-    }
-    return s;
+     }
+     return ans;
     }
 };
