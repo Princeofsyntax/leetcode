@@ -10,7 +10,7 @@ public:
           while(i < stations.size()){
               //push stations within the reach with my current fuel level from my current position
               if(stations[i][0] <= dist+fuel){
-                  pq.push({stations[i][1], stations[i][0]});
+                  pq.push({stations[i][1], stations[i][0]}); //{fuel,positions}
               }
               else{
                   break;
