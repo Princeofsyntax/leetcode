@@ -75,7 +75,7 @@ public:
 class Solution {
 public:
     string replaceWords(vector<string>& dictionary, string sentence) {
-        //use tries
+        //use tries (leetcode 208)
         string ans;
         Trie trie;
         //insert dictionary into trie
