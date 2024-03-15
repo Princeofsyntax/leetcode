@@ -1,5 +1,6 @@
 class Solution {
 public:
+    //DP - space optimized sol.
     bool solveUsingSpaceOpt(vector<int> &nums, int target)
     {
         int n = nums.size();
