@@ -1,31 +1,48 @@
 class Solution {
 public:
-    bool isPalindrome(string &s,int start,int end){
-    while (start < end)
+    int maxLen = 1; // as single character is also palindrome
+    int start = 0;
+
+    bool solve(string& s, int i, int j, vector<vector<int>> &dp)
     {
-        if (s[start] != s[end])
+        if (i >= j)
         {
-            return false;
+            return true;
         }
-        start++, end--;
-    }
-    return true;
-}
-    string longestPalindrome(string s) {
-         string ans=""; //null
-    for (int i = 0; i < s.size(); i++)  
-    {
-        for (int j = i; j < s.size(); j++) 
+        // check
+        if (dp[i][j] != -1)
+            return dp[i][j];
+
+        bool flag = false;
+        if (s[i] == s[j])
         {
-            if (isPalindrome(s, i, j)) 
-            {
-                string t= s.substr(i, j-i+1); 
-                ans = t.size() > ans.size() ? t:ans; 
+            flag = solve(s, i + 1, j - 1, dp);
+        }
+        if (flag)
+        {
+            int currLen = j - i + 1;
+            if (currLen > maxLen){
+                maxLen = currLen;
+                start = i;
             }
-            
         }
-        
+        // store and return
+        return dp[i][j] = flag;
     }
-    return ans;
+
+    string longestPalindrome(string s)
+    {
+        int n = s.size();
+        // create dp
+        vector<vector<int>> dp(n, vector<int>(n, -1));
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = i; j < n; j++)
+            {
+                bool t = solve(s, i, j, dp);
+            }
+        }
+        return s.substr(start, maxLen);
     }
 };
