@@ -2,7 +2,7 @@ class Solution {
 public:
     vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
         //In a tree, the center nodes are those that, when removed, result in trees with the minimum possible height
-        //So we have to calculate center nodes
+        // Removing any of these center nodes would increase the height of the resulting trees ; So we have to calculate center nodes
         if( n == 1 || edges.empty()){
             return {0};
         }
