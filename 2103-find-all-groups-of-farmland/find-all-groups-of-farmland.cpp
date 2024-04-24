@@ -20,7 +20,6 @@ public:
 
     vector<vector<int>> findFarmland(vector<vector<int>>& land) {
         vector<vector<int>>ans;
-
         for(int i = 0; i < land.size(); i++){
             for(int j = 0; j < land[0].size(); j++){
                 if(land[i][j] == 1){
