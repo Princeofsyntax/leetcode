@@ -1,6 +1,8 @@
 class Solution {
 public:
     vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+        //In a tree, the center nodes are those that, when removed, result in trees with the minimum possible height
+        //So we have to calculate center nodes
         if( n == 1 || edges.empty()){
             return {0};
         }
@@ -28,7 +30,7 @@ public:
         while(n > 2){
             n = n - ans.size();
             vector<int>nextLeafNodes;
-
+            //center nodes are at middle so we will eventually remove leaf nodes to reach to center nodes
             for(auto leaf : ans){
               //find parent of leaf
               int u = *graph[leaf].begin(); //as parent would be first which will be pushed in set corresponding to leaf
