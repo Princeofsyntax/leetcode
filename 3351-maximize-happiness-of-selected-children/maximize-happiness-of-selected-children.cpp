@@ -13,10 +13,10 @@ public:
         if(k == 1) return ans[0];
 
         long long sum = 0;
-        int decremented = 0;
+        int decreseBy = 0;
         for(int i = 0; i < k; i++){
-            sum += max(0, happiness[i] - decremented);
-            ++decremented;
+            sum += max(0, happiness[i] - decreseBy);
+            ++decreseBy;
         }
 
         return sum;
