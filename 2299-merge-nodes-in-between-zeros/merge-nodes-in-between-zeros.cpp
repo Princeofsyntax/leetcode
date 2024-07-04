@@ -35,6 +35,7 @@ public:
 
         //Deleting old list
         while(temp){
+            //till last node we have to delete
             ListNode* nxt = temp->next;
             delete temp; //tp avoid memory leak
             temp = nxt; 
