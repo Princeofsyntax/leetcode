@@ -45,7 +45,7 @@ public:
         numerator /= greatestCommonDivisor;
         commonDenominator /= greatestCommonDivisor;
       
-        return std::to_string(numerator) + "/" + std::to_string(commonDenominator);
+        return to_string(numerator) + "/" + to_string(commonDenominator);
     }
 
 };
