@@ -12,44 +12,39 @@
 class Solution {
 public:
     vector<vector<int>> verticalTraversal(TreeNode* root) {
-        vector<vector<int>> ans;
+         if (!root) return {};
+         vector<vector<int>> result;
+         queue<pair<TreeNode*, pair<int, int>>> q;
 
-        queue<pair<TreeNode*,pair<int,int>>>q; //Node, {row,col}
-        q.push({root,{0,0}});
-        //create a Multi-Map -->map stores key in sorted form-->we will use to store w.r.t column
-        map<int,map<int,multiset<int>>>mp; //col -> {row: [x,y,x...]}
-        //multiSet is used so that same values also get stored and multiSet stores them in sorted order
-
-        while(!q.empty()){
-            auto front = q.front();//auto is used as queue is storing complex dataStructure
+        map<int, map<int, multiset<int>>> mp;
+        
+        q.push({root, {0, 0}});
+        
+        while (!q.empty()) {
+            auto p = q.front();
             q.pop();
-            TreeNode*&node = front.first;
-            auto&coordinate = front.second; //taken by reference to avoid formation of copy
-            int&row = coordinate.first;
-            int&col = coordinate.second;
-
-            mp[col][row].insert(node->val);
-
-            if(node->left){
-                q.push({node->left,{row+1,col-1}});
-            }
-            if(node->right){
-                q.push({node->right,{row+1,col+1}});
-            }
+            TreeNode* curr = p.first;
+            int vertical = p.second.first;
+            int level = p.second.second;
             
-        }
-        //store final vertical order traversal into ans vector
-        for(auto it:mp) //column wise sorted
-        {
-            auto&colMap = it.second; //a map
-            vector<int>vline;
-            for(auto colMapIt : colMap) //row wise sorted
-            {
-                auto&mSet = colMapIt.second;
-                vline.insert(vline.end(), mSet.begin(), mSet.end()) ; //till vLine.end()-->from mSet.begin() to mSet.end()
+            mp[vertical][level].insert(curr->val);
+            
+            if (curr->left) {
+                q.push({curr->left, {vertical - 1, level + 1}});
             }
-        ans.push_back(vline);
+            if (curr->right) {
+                q.push({curr->right, {vertical + 1, level + 1}});
+            }
         }
-        return ans;
+        
+        for (auto& [vertical, nodes_at_levels] : mp) {
+            vector<int> col;
+            for (auto& [level, nodes] : nodes_at_levels) {
+                col.insert(col.end(), nodes.begin(), nodes.end());
+            }
+            result.push_back(col);
+        }
+        
+        return result;
     }
 };
