@@ -1,59 +1,61 @@
-struct Node{
-    int count=0;
-    Node *list[26]={NULL};
-    bool containKey(char ch){
-        return list[ch-'a']!=NULL;
-    }
-    Node *get(char ch){
-        return list[ch-'a'];
-    }
-    void put(char ch,Node *new_node){
-        list[ch-'a']=new_node;
-    }
-    void inc(char ch){
-        list[ch-'a']->count+=1;
-    }
-    int retCount(char ch){
-        return list[ch-'a']->count;
+class Solution {
+public:
+    // Trie Node structure
+struct TrieNode {
+    TrieNode* children[26];  // For 26 lowercase English letters
+    int count;  // To store the count of words passing through this node
+
+    TrieNode() {
+        count = 0;
+        for (int i = 0; i < 26; ++i)
+            children[i] = nullptr;
     }
 };
-class Solution {
-private:
-Node *root;
+
+class Trie {
 public:
-    Solution(){
-        root=new Node;
+    TrieNode* root;
+
+    Trie() {
+        root = new TrieNode();
     }
-    void insert(string word){
-        Node *node=root;
-        for(auto ch:word){
-            if(!node->containKey(ch)){
-                node->put(ch,new Node);
+
+    void insert(const string& word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            int idx = ch - 'a';
+            if (node->children[idx] == nullptr) {
+                node->children[idx] = new TrieNode();
             }
-            node->inc(ch);
-            node=node->get(ch);
+            node = node->children[idx];
+            node->count += 1;  
         }
     }
-    int search(string word){
-        Node *node=root;
-        int preCount=0;
-        for(auto ch:word){
-            preCount+=node->retCount(ch);
-            node=node->get(ch);
+
+    int getPrefixScore(const string& word) {
+        TrieNode* node = root;
+        int totalScore = 0;
+        for (char ch : word) {
+            int idx = ch - 'a';
+            node = node->children[idx];
+            totalScore += node->count;  
         }
-        return preCount;
+        return totalScore;
     }
+};
+
     vector<int> sumPrefixScores(vector<string>& words) {
-        //This problem can be solved using the trie data structure
-        for(auto word:words){
-            insert(word);
+        Trie trie;
+    
+        for (const string& word : words) {
+            trie.insert(word);
         }
-        int n=words.size();
-        vector<int>res(n);
-        for(int i=0;i<n;i++){
-            int preCount=search(words[i]);
-            res[i]=preCount;
+        
+        vector<int> result;
+        for (const string& word : words) {
+            result.push_back(trie.getPrefixScore(word));
         }
-        return res;
-    }
+        
+        return result;
+        }
 };
