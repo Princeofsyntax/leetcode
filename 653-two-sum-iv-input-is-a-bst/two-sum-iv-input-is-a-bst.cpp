@@ -9,39 +9,53 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+class BSTIterator {
+public:
+    stack<TreeNode*>st;
+    // reverse -> true -> before && reverse -> false -> next
+    bool reverse = true;
+    BSTIterator(TreeNode* root, bool isReverse) {
+        reverse = isReverse;
+        pushAll(root);
+    }
+    
+    int next() {
+        TreeNode* nextNode = st.top();
+        st.pop();
+        if(!reverse)
+            pushAll(nextNode->right);
+        else 
+            pushAll(nextNode->left);
+        return nextNode->val;
+    }
+    
+    bool hasNext() {
+        return !st.empty();
+    }
+private:
+   void pushAll(TreeNode* node){
+      for( ; node != nullptr ; ){
+        st.push(node);
+        if(reverse) node = node->right;
+        else node = node->left;
+      }
+   }
+};
+
 class Solution {
 public:
-    void storeInOrder(TreeNode* root, vector<int>&inorder){
-       if(!root){
-           return;
-       }
-       storeInOrder(root->left, inorder);
-       inorder.push_back(root->val);
-       storeInOrder(root->right, inorder);
-    }
 
     bool findTarget(TreeNode* root, int k) {
-        vector<int>inorder;
-        //get a vector having inorder traversal of given bst
-        //inorder has elements in increasing order
-        storeInOrder(root, inorder);
-
-        int s=0;
-        int e = inorder.size()-1;
-
-        while(s < e){
-            int sum = inorder[s]+inorder[e];
-            if(sum==k){
-                return true;
-            }
-            if(sum > k){
-                e--;
-            }
-            else{
-                s++;
-            }
+        if(!root)return false;
+        BSTIterator l(root, false);
+        BSTIterator r(root, true);
+        int i = l.next();
+        int j = r.next();// provide before element
+        while(i < j){
+            if(i + j == k)return true;
+            else if(i + j < k) i = l.next();
+            else j = r.next();
         }
-        //if not found
         return false;
     }
 };
