@@ -1,38 +1,24 @@
 class Solution {
 public:
-   bool check(vector<string> &wordDict, string &word)
-    {
-        for (auto i : wordDict)
-        {
-            if (word == i)
-                return true;
-        }
-        return false;
-    }
+    unordered_map<int, bool> memo;
 
-   bool solve(string &s, vector<string> &wordDict, vector<int> &dp)
-    {
-        for (int start = s.size() - 1; start >= 0; start--)
-        {
-            string word = "";
-            bool flag = false;
-            for (int i = start; i < s.size(); i++)
-            {
-                word += s[i];
-                if (check(wordDict, word))
-                {
-                    flag = flag || dp[i + 1];
-                }
+    bool canBreak(int start, string &s, unordered_set<string> &wordSet) {
+        if (start == s.size()) return true;
+
+        if (memo.find(start) != memo.end()) return memo[start];
+
+        for (int end = start + 1; end <= s.size(); ++end) {
+            string substring = s.substr(start, end - start);
+            if (wordSet.find(substring) != wordSet.end() && canBreak(end, s, wordSet)) {
+                return memo[start] = true;
             }
-            dp[start] = flag;
         }
-        return dp[0];
+        
+        return memo[start] = false;
     }
 
-    bool wordBreak(string s, vector<string> &wordDict)
-    {
-        // create dp
-        vector<int> dp(s.size() + 1, true);
-        return solve(s, wordDict, dp);
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+        return canBreak(0, s, wordSet);
     }
 };
