@@ -1,41 +1,24 @@
 class Solution {
 public:
-    //overlapping subproblem(dp)
-
-    int solveMem(vector<int>& coins, int amount, vector<int>&dp){
-         //base case
-        if(amount == 0){
-            return 0; //to create 0 amount we need 0 coins
-        }
-        if(amount < 0){
-            //return that value which do not impact the result
-            return INT_MAX;
-        }
-        //3.check if answer already exists
-        if(dp[amount] != -1 ){
-            return dp[amount];
+    int helper(int i, vector<int>&coins, int amount, vector<vector<int>>&dp){
+        if (amount == 0) return 0; 
+        if (i == 0) return (amount % coins[0] == 0) ? amount / coins[0] : INT_MAX; 
+        if(dp[i][amount] != -1)return dp[i][amount];
+        int notTake = helper(i - 1, coins, amount, dp); 
+        int take = INT_MAX;
+        if (coins[i] <= amount) {
+            int res = helper(i, coins, amount - coins[i], dp);  
+            if (res != INT_MAX) take = 1 + res;  
         }
 
-        int mini = INT_MAX;
-        for(int i = 0; i < coins.size(); i++){
-            int ans = solveMem(coins, amount-coins[i], dp);
-            if(ans != INT_MAX){
-               //valid answer
-               mini = min(1+ans,mini);//1 is for the coin which is being used
-            }
-        }
+        return dp[i][amount] = min(take, notTake);  
 
-        //2.store the answer
-        dp[amount] = mini;
-        return mini;
     }
+
     int coinChange(vector<int>& coins, int amount) {
-        //1.create dp array
-        vector<int>dp(amount+1, -1);
-        int ans = solveMem(coins,amount,dp);
-        if(ans == INT_MAX)
-            return -1;
-        else
-            return ans;
+        int n = coins.size();
+        vector<vector<int>>dp(n, vector<int>(amount+1,-1));
+        int result = helper(n - 1, coins, amount, dp);
+        return result == INT_MAX ? -1 : result;  
     }
 };
