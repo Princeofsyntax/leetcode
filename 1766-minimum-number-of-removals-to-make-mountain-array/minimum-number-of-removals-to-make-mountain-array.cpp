@@ -37,7 +37,6 @@ public:
         reverse(nums.begin(), nums.end());
         solveOptimal(nums, lds);
 
-        // main logic
         int largestMountainLength = INT_MIN;
         for (int i = 0; i < nums.size(); i++)
         {
