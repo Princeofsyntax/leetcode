@@ -1,25 +1,19 @@
 class Solution {
 public:
+    const int MOD = 1e9 + 7;
+    int dfs(int length, int low, int high, int zero, int one, vector<int>& dp) {
+        if (length > high) return 0;
+        if (dp[length] != -1) return dp[length];
+        // Count the current string if it's within [low, high]
+        int count = (length >= low) ? 1 : 0;
+        // Recursively append '0's and '1's
+        count = (count + dfs(length + zero, low, high, zero, one, dp)) % MOD;
+        count = (count + dfs(length + one, low, high, zero, one, dp)) % MOD;
+        return dp[length] = count;
+    }
+
     int countGoodStrings(int low, int high, int zero, int one) {
-        const int MOD = 1e9 + 7;
-        //dp[i] stores the number of good strings of length i
-        vector<int> dp(high + 1, 0);
-        dp[0] = 1; 
-        for(int i = 1; i <= high; ++i) {
-            //Add strings ending with '0'
-            if(i >= zero) {
-                dp[i] = (dp[i] + dp[i - zero]) % MOD;
-            }
-            //Add strings ending with '1'
-            if(i >= one) {
-                dp[i] = (dp[i] + dp[i - one]) % MOD;
-            }
-        }
-        //Count only lengths between low and high
-        int result = 0;
-        for(int i = low; i <= high; ++i) {
-            result = (result + dp[i]) % MOD;
-        }
-        return result;
+        vector<int> dp(high + 1, -1);
+        return dfs(0, low, high, zero, one, dp);
     }
 };
