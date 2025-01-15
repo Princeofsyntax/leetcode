@@ -1,100 +1,47 @@
 class Solution {
 public:
-         
-    //here in next smaller we will store indices and in place of -1, we will store totalLength(as we want to calculate width)
-    vector<int> nextSmaller(vector<int> &v)
-    {
-        stack<int> s;
-        s.push(-1); 
-        vector<int> ans(v.size());
-
-        // right to left movement
-        for (int i = v.size() - 1; i >= 0; i--)
-        {
-            int curr = v[i];
-            while ((s.top() != -1)  && (v[s.top()] >= curr))
-            {
-                s.pop();
+    int largestRectangleArea(vector<int> &histo) {
+        stack<int> st;
+        int maxA = 0;
+        int n = histo.size();
+        for (int i = 0; i <= n; i++) {
+            while (!st.empty() && (i == n || histo[st.top()] >= histo[i])) {
+                int height = histo[st.top()];
+                st.pop();
+                int width;
+                if (st.empty())
+                    width = i;
+                else
+                    width = i - st.top() - 1;
+                maxA = max(maxA, width * height);
             }
-            ans[i] = s.top();
-            s.push(i);
-        }
-        return ans;
-    }
-    //here in next smaller we will store indices and -1,(as we want to calculate width)
-    vector<int> previousSmaller(vector<int> &v)
-    {
-        stack<int> s;
-        s.push(-1); 
-        vector<int> ans(v.size());
-
-        // left to right movement
-        for (int i = 0; i < v.size(); i++)
-        {
-            int curr = v[i];
-            while ((s.top() != -1) && (v[s.top()] >= curr))
-            {
-                s.pop();
+            if (i < n) {
+                st.push(i);
             }
-            ans[i] = s.top();
-            s.push(i);
         }
-        return ans;
+        return maxA;
     }
 
+    int maximalRectangle(vector<vector<char>>& mat) {
+        //tret this question as histogram question
+        if (mat.empty() || mat[0].empty()) return 0;
 
-    int largestRectangleArea(vector<int>& height) {
-        int size = height.size();
+        int maxArea = 0;
+        int n = mat.size();
+        int m = mat[0].size();
+        vector<int> height(m, 0);
 
-    //step1: previous smaller element output
-    vector<int>prev = previousSmaller(height);
-
-    //step2: next smaller element output
-    vector<int>next = nextSmaller(height);
-
-    int maxArea = INT_MIN;
-
-    for (int i = 0; i < height.size(); i++)
-    {
-        int length = height[i];
-        if(next[i] == -1){
-            next[i] = size; //because we do not need -1 in nextSmall, we need size value 
-        }
-        int width = next[i]-prev[i]-1;
-
-        int area = length*width;
-        maxArea = max(area,maxArea);
-    }
-    return maxArea;
-  }
-
-    int maximalRectangle(vector<vector<char>>& matrix) {
-        //take help form largest rectangular area in histogram
-        vector<vector<int>>v; //to take input of matrix as integer from character
-        int n = matrix.size();//rows
-        int m = matrix[0].size();//columns
-        for(int i = 0; i<n ; i++){
-            vector<int>t;
-            for(int j = 0; j<m ;j++){
-              t.push_back(matrix[i][j] - '0'); //converting to int
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                // Update histogram heights.
+                if (mat[i][j] == '1') // Compare to character '1'.
+                    height[j]++;
+                else
+                    height[j] = 0;
             }
-            v.push_back(t);
+            int area = largestRectangleArea(height);
+            maxArea = max(maxArea, area);
         }
-
-        int area = largestRectangleArea( v[0] );
-        for(int i = 1; i<n; i++){
-            for(int j=0; j<m ; j++){
-                //lets update the current row with previous row
-                if(v[i][j]) //v[i][j] is not 0
-                {
-                  v[i][j] += v[i-1][j];
-                }
-                else{
-                    v[i][j] = 0;
-                }
-            }
-            area = max(area, largestRectangleArea(v[i]));
-        }
-        return area;
+        return maxArea;
     }
 };
