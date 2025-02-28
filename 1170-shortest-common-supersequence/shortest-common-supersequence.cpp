@@ -1,61 +1,62 @@
 class Solution {
 public:
-    string shortestCommonSupersequence(string s1, string s2) {
-        int n = s1.size();
-        int m = s2.size();
+    // string helper(string &str1, string &str2, vector<vector<string>>&dp, int i, int j){
+    //     if(i == 0)return str2.substr(0,j);
+    //     if(j == 0)return str1.substr(0,i);
 
-        vector < vector < int >> dp(n + 1, vector < int > (m + 1, 0));
-        for (int i = 0; i <= n; i++) {
-            dp[i][0] = 0;
-        }
+    //     if(dp[i][j] != "") return dp[i][j];
+    //     if (str1[i - 1] == str2[j - 1]) return dp[i][j] = helper(str1, str2, dp, i - 1, j - 1) + str1[i - 1];
+    //     string option1 = helper(str1, str2,dp, i - 1, j) + str1[i-1];
+    //     string option2 = helper(str1, str2,dp, i, j - 1) + str2[j-1];
+
+    //     return dp[i][j] = (option1.size() < option2.size()) ? option1 : option2;
+    // }
+
+    string shortestCommonSupersequence(string str1, string str2) {
+        // int m = str1.size();
+        // int n = str2.size();
+        // vector<vector<string>> dp(m + 1, vector<string>(n + 1, ""));
+        // return helper(str1, str2, dp, m, n);
+        int m = str1.size(), n = str2.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+
         for (int i = 0; i <= m; i++) {
-            dp[0][i] = 0;
-        }
-
-        for (int ind1 = 1; ind1 <= n; ind1++) {
-            for (int ind2 = 1; ind2 <= m; ind2++) {
-            if (s1[ind1 - 1] == s2[ind2 - 1])
-                dp[ind1][ind2] = 1 + dp[ind1 - 1][ind2 - 1];
-            else
-                dp[ind1][ind2] = 0 + max(dp[ind1 - 1][ind2], dp[ind1][ind2 - 1]);
+            for (int j = 0; j <= n; j++) {
+                if (i == 0) dp[i][j] = j;
+                else if (j == 0) dp[i][j] = i;
+                else if (str1[i - 1] == str2[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1]);
             }
         }
 
-        int len = dp[n][m];
-        int i = n;
-        int j = m;
-
-        int index = len - 1;
-        string ans = "";
+        int i = m, j = n;
+        string result = "";
 
         while (i > 0 && j > 0) {
-            if (s1[i - 1] == s2[j - 1]) {
-            ans += s1[i-1];
-            index--;
-            i--;
-            j--;
-            } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                ans += s1[i-1];
+            if (str1[i - 1] == str2[j - 1]) {
+                result += str1[i - 1];
+                i--, j--;
+            } else if (dp[i - 1][j] < dp[i][j - 1]) {
+                result += str1[i - 1];
                 i--;
             } else {
-                ans += s2[j-1];
+                result += str2[j - 1];
                 j--;
             }
         }
-        
-        //Adding Remaing Characters - Only one of the below two while loops will run 
-        
-        while(i>0){
-            ans += s1[i-1];
+
+        while (i > 0) {
+            result += str1[i - 1];
             i--;
         }
-        while(j>0){
-            ans += s2[j-1];
+        while (j > 0) {
+            result += str2[j - 1];
             j--;
         }
 
-        reverse(ans.begin(),ans.end());
-        
-        return ans;
+        reverse(result.begin(), result.end());
+        return result;
     }
 };
