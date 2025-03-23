@@ -1,41 +1,43 @@
 class Solution {
 public:
+    #define ll long long
+    #define pll pair<ll,ll>
+    #define MOD 1000000007
+
     int countPaths(int n, vector<vector<int>>& roads) {
-        const int MOD = 1e9 + 7;
-        vector<vector<pair<int, int>>> graph(n);
-        for (const auto& road : roads) {
-            int u = road[0];
-            int v = road[1];
-            int time = road[2];
-            graph[u].push_back({v, time});
-            graph[v].push_back({u, time}); 
+        //Make Adjacency List
+        vector<vector<pll>> adj(n);
+        for(auto& road: roads){
+            adj[road[0]].push_back(make_pair(road[1],road[2]));
+            adj[road[1]].push_back(make_pair(road[0],road[2]));
         }
-
-        priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq; //{distance, node}
-        pq.push({0, 0});
-
-        vector<long long> distance(n, LLONG_MAX); //distance[i] = minimum time to reach node i
-        distance[0] = 0;
-
-        vector<int> ways(n, 0); //number of ways to reach node i with the shortest time
-        ways[0] = 1;
-
-        while (!pq.empty()) {
-            auto [dist, u] = pq.top();
-            pq.pop();
-            if (dist > distance[u]) {
-                continue;
-            }
-            for (const auto& [v, time] : graph[u]) {
-                if (distance[u] + time < distance[v]) {
-                    distance[v] = distance[u] + time;
-                    ways[v] = ways[u]; // Reset the number of ways
-                    pq.push({distance[v], v});
-                } else if (distance[u] + time == distance[v]) {
-                    ways[v] = (ways[v] + ways[u]) % MOD; // Add the number of ways
+        //Apply Dijkstra and keep tracking number of ways to reach a node with min_cost
+        priority_queue<pll,vector<pll>,greater<pll>> minheap;
+        minheap.push(make_pair(0,0));//{cost,node}: Source is 0
+        vector<bool> processed(n,false);
+        vector<ll> count_ways(n,0);//Count total ways to reach to a node from start (0)
+        count_ways[0] = 1;//There is 1 way to reach to start node
+        vector<ll> min_cost(n,LONG_MAX);
+        min_cost[0] = 0;
+        while(!minheap.empty()){
+            pll curr = minheap.top();
+            minheap.pop();
+            ll cost = curr.first;
+            ll curr_node = curr.second;
+            if(processed[curr_node]) continue;
+            processed[curr_node] = true;
+            for(auto& [nbr,weight]: adj[curr_node]){
+                if(!processed[nbr]){
+                    if(cost + weight == min_cost[nbr])
+                        count_ways[nbr] = (count_ways[nbr] + count_ways[curr_node])%MOD;
+                    else if(cost + weight < min_cost[nbr]){
+                        min_cost[nbr] = cost + weight;
+                        count_ways[nbr] = count_ways[curr_node];
+                        minheap.push(make_pair(cost + weight, nbr));//Push node only if it minimizes cost
+                    }
                 }
             }
         }
-        return ways[n - 1];
+        return count_ways[n-1];
     }
 };
