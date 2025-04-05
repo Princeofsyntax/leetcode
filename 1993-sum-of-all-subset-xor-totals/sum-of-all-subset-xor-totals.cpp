@@ -9,8 +9,8 @@ class Solution {
     if (i == nums.size())
       return xors;
 
-    const int x = dfs(nums, i + 1, xors);
-    const int y = dfs(nums, i + 1, nums[i] ^ xors);
+    const int x = dfs(nums, i + 1, xors); //exclude
+    const int y = dfs(nums, i + 1, nums[i] ^ xors); //include
     return x + y;
   }
 };
