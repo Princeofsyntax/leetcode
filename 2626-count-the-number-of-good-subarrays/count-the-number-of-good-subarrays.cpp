@@ -9,18 +9,16 @@ public:
         ll equal_pairs = 0; 
 
         while(left<n){
-            while(right<n and equal_pairs<k){
+            while(right<n && equal_pairs<k){
                 freq[nums[right]]++;
                 if(freq[nums[right]]>=2)equal_pairs += freq[nums[right]]-1;
                 right++;
             }
-            if(equal_pairs>=k)
-                good_subarrays += n-right+1;
+            if(equal_pairs>=k) good_subarrays += n-right+1;
 
             //remove left item
             freq[nums[left]]--;
-            if(freq[nums[left]]>0)
-                equal_pairs -= freq[nums[left]];
+            if(freq[nums[left]]>0) equal_pairs -= freq[nums[left]];
             left++;
         }
         return good_subarrays;
