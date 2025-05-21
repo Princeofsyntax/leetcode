@@ -15,12 +15,10 @@ public:
             int x = pair.first;
             int y = pair.second;
 
-          // Set the entire row to zero
             for(int j = 0; j < matrix[0].size(); j++){
                 matrix[x][j] = 0;
             }
 
-            // Set the entire column to zero
             for(int i = 0; i < matrix.size(); i++){
                 matrix[i][y] = 0;
             }
