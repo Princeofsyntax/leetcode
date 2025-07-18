@@ -1,46 +1,53 @@
 class Solution {
 public:
-    #define ll long long
     long long minimumDifference(vector<int>& nums) {
-        int n = nums.size()/3;
-        vector<ll>prefix(nums.size(), -1) , suffix(nums.size(), -1);
-        //prefix[i] stores sum of first n elements from left side --> to have minimum sum
-        //suffix[i] stores sum of first n elements from right side --> to have maximum sum
+        int N = nums.size();
+        int n = N / 3;
+        vector<long long> prefix_mins(N, -1);
+        priority_queue<int> max_pq; 
+        long long current_sum = 0;
 
-        ll sum = 0;  //minimum n elements sum
-        priority_queue<ll>pq; //maxHeap
-        for(int i = 0; i < nums.size(); i++){
-            sum += nums[i];
-            pq.push(nums[i]);
+        for (int i = 0; i < N; ++i) {
+            current_sum += nums[i];
+            max_pq.push(nums[i]);
 
-            //pop out maximum element
-            if(pq.size() > n){
-                sum -= pq.top(); //so that minimum sum can be achieved
-                pq.pop();
+            if (max_pq.size() > n) {
+                current_sum -= max_pq.top();
+                max_pq.pop();
             }
-            if(pq.size() == n){
-                prefix[i] = sum;
+
+            if (max_pq.size() == n) {
+                prefix_mins[i] = current_sum;
             }
         }
-        sum = 0; // maximum n elements sum
-         priority_queue<ll, vector<ll>, greater<ll>>pq2; //minHeap
-        for(int i = nums.size()-1; i >= 0 ; i--){
-            sum += nums[i];
-            pq2.push(nums[i]);
 
-            //pop out minimum element
-            if(pq2.size() > n){
-                sum -= pq2.top(); //so that maximum sum can be achieved
-                pq2.pop();
+        vector<long long> suffix_maxs(N, -1);
+    
+        priority_queue<int, vector<int>, greater<int>> min_pq; 
+        current_sum = 0;
+
+        for (int i = N - 1; i >= 0; --i) {
+            current_sum += nums[i];
+            min_pq.push(nums[i]);
+
+            if (min_pq.size() > n) {
+                current_sum -= min_pq.top();
+                min_pq.pop();
             }
-            if(pq2.size() == n){
-                suffix[i] = sum;
+
+            if (min_pq.size() == n) {
+                suffix_maxs[i] = current_sum;
             }
         }
-        ll ans = LONG_LONG_MAX;
-        for(int i = n-1; i < 2*n; ++i){
-            ans = min(ans, prefix[i]-suffix[i+1]);
+
+        long long min_diff = LLONG_MAX;
+
+        for (int i = n - 1; i < 2 * n; ++i) {
+            long long sum_first = prefix_mins[i];
+            long long sum_second = suffix_maxs[i + 1];
+            min_diff = std::min(min_diff, sum_first - sum_second);
         }
-        return ans;
+
+        return min_diff;
     }
 };
