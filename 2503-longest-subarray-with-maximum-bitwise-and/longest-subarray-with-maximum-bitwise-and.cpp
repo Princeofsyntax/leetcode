@@ -1,21 +1,13 @@
 class Solution {
 public:
     int longestSubarray(vector<int>& nums) {
-        int maxVal = 0;
-        for(const auto&num : nums){
-            maxVal = max(maxVal, num);
+        int maxVal = *max_element(nums.begin(),nums.end());
+        int maxLen = 0, currLen = 0;
+        for(const auto& num : nums){
+            if(num == maxVal)currLen++;
+            else currLen = 0;
+            maxLen = max(maxLen, currLen);
         }
-
-        int longest = 0, currentLongest = 0;
-        for(const auto&num : nums){
-            if(num == maxVal){
-                currentLongest++;
-                longest = max(longest, currentLongest);
-            }
-            else{
-                currentLongest = 0;
-            }
-        }
-        return longest;
+        return maxLen;
     }
 };
