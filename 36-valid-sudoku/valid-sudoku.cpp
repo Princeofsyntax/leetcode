@@ -1,33 +1,51 @@
 class Solution {
 public:
-    bool isValidSudoku(std::vector<std::vector<char>>& board) {
-        // Create three 9x9 matrices for rows, columns, and sub-boxes respectively.
-        vector<vector<bool>> rowCheck(9, vector<bool>(9, false));
-        vector<vector<bool>> colCheck(9, vector<bool>(9, false));
-        vector<vector<bool>> subBoxCheck(9, vector<bool>(9, false));
+    bool isValidSudoku(vector<vector<char>>& board) {
+        vector<bool> check(9, false);
 
-        for (int row = 0; row < 9; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                char currentChar = board[row][col];
-              
-                if (currentChar == '.') continue;
-
-                int num = currentChar - '0' - 1;
-
-                int subBoxIndex = (row / 3) * 3 + (col / 3); //subBox index
-
-                if (rowCheck[row][num] || colCheck[col][num] || subBoxCheck[subBoxIndex][num]) {
+        // Check every row
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') continue;
+                int num = board[i][j] - '0';
+                if (check[num - 1] == true) {
                     return false;
                 }
+                check[num - 1] = true;
+            }
+            fill(check.begin(), check.end(), false);
+        }
+        
+        // Check every column
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[j][i] == '.') continue;
+                int num = board[j][i] - '0';
+                if (check[num - 1] == true) {
+                    return false;
+                }
+                check[num - 1] = true;
+            }
+            fill(check.begin(), check.end(), false);
+        }
 
-                // Mark the number as used in the current row, column, and sub-box.
-                rowCheck[row][num] = true;
-                colCheck[col][num] = true;
-                subBoxCheck[subBoxIndex][num] = true;
+        // Check every 3x3 block
+        for (int i = 0; i < 9; i += 3) {
+            for (int j = 0; j < 9; j += 3) {
+                for (int l = i; l < i + 3; l++) { 
+                    for (int k = j; k < j + 3; k++) { 
+                        if (board[l][k] == '.') continue;
+                        int num = board[l][k] - '0';
+                        if (check[num - 1] == true) {
+                            return false;
+                        }
+                        check[num - 1] = true;
+                    }
+                }
+                fill(check.begin(), check.end(), false);
             }
         }
 
-        // If all checks pass, then the board is valid.
         return true;
     }
 };
