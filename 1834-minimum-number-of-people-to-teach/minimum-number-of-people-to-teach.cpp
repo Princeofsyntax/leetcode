@@ -1,54 +1,33 @@
 class Solution {
 public:
-    int minimumTeachings(int n, vector<vector<int>>& languages, vector<vector<int>>& friendships) {
-        int m = languages.size();
+    static int minimumTeachings(int n, vector<vector<int>>& languages, vector<vector<int>>& friendships) {
+        int m=languages.size(); // number of people
+
+        //known languages for each person
+        vector<bitset<501>> know(m);
+        for (int i=0; i<m; i++) 
+            for (int l : languages[i]) know[i][l]=1;
         
-        vector<unordered_set<int>> lang_sets(m);
-        for (int i = 0; i < m; ++i) {
-            lang_sets[i] = unordered_set<int>(languages[i].begin(), languages[i].end());
+        // people need be taught
+        bitset<501> need=0;
+        for (auto& f : friendships) {
+            int a=f[0]-1, b=f[1]-1;
+            if ((know[a] & know[b]).any()) continue; // can talk
+            need[a]=need[b]=1;
         }
 
-        unordered_set<int> problem_users;
-        for (const auto& f : friendships) {
-            int u = f[0] - 1;
-            int v = f[1] - 1;
-            
-            bool can_communicate = false;
-            
-            auto& smaller_set = lang_sets[u].size() < lang_sets[v].size() ? lang_sets[u] : lang_sets[v];
-            auto& larger_set = lang_sets[u].size() < lang_sets[v].size() ? lang_sets[v] : lang_sets[u];
+        // if no need
+        if (need.count()==0) return 0;
 
-            for (int lang : smaller_set) {
-                if (larger_set.count(lang)) {
-                    can_communicate = true;
-                    break;
-                }
+        int ans=INT_MAX;
+        for (int lang=1; lang<=n; lang++) { // languages for 1..n
+            int cnt=0;
+            for (int i=0; i<m; i++) {
+                if (need[i] & !know[i][lang]) cnt++;
             }
-            
-            if (!can_communicate) {
-                problem_users.insert(u);
-                problem_users.insert(v);
-            }
+            ans=min(ans, cnt);
         }
-        
-        if (problem_users.empty()) {
-            return 0;
-        }
-        
-        vector<int> lang_counts(n + 1, 0);
-        for (int user_idx : problem_users) {
-            for (int lang : lang_sets[user_idx]) {
-                lang_counts[lang]++;
-            }
-        }
-        
-        int max_speakers = 0;
-        for (int l = 1; l <= n; ++l) {
-            if (lang_counts[l] > max_speakers) {
-                max_speakers = lang_counts[l];
-            }
-        }
-        
-        return problem_users.size() - max_speakers;
+
+        return ans;
     }
 };
