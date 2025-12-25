@@ -1,9 +1,7 @@
 class Solution {
 public:
     long long maximumHappinessSum(vector<int>& happiness, int k) {
-        //first sort the array in descending order
-        sort(happiness.begin(), happiness.end(), greater<int>());
-
+        sort(happiness.rbegin(), happiness.rend());
         vector<int>ans(k);
         if(k == 0) return 0;
 
