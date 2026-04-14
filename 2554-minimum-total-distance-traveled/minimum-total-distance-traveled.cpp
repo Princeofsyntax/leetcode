@@ -1,38 +1,33 @@
 class Solution {
 public:
-    long long dfs(int r, int f, vector<int>& robot, vector<vector<int>>& factory, vector<vector<long long>>& memo) {
-        // if all robots are repaired, return 0 distance
-        if (r == robot.size()) return 0;
-        //if no factories left, return an invalid large distance
-        if (f == factory.size()) return LLONG_MAX;
-        
-        if (memo[r][f] != -1) return memo[r][f];
-
-        long long minDistance = LLONG_MAX;
-
-        minDistance = dfs(r, f + 1, robot, factory, memo);
-
-        long long distance = 0;
-        for (int i = 0; i < factory[f][1] && r + i < robot.size(); ++i) {
-            distance += abs(robot[r + i] - factory[f][0]);
-            long long nextDistance = dfs(r + i + 1, f + 1, robot, factory, memo);
-            if (nextDistance != LLONG_MAX) {
-                minDistance = min(minDistance, distance + nextDistance);
-            }
-        }
-
-        return memo[r][f] = minDistance;  
-    }
-
     long long minimumTotalDistance(vector<int>& robot, vector<vector<int>>& factory) {
         sort(robot.begin(), robot.end());
         sort(factory.begin(), factory.end());
 
         int n = robot.size();
         int m = factory.size();
-        vector<vector<long long>> memo(n, vector<long long>(m, -1));
 
-        // Start recursion with first robot and first factory
-        return dfs(0, 0, robot, factory, memo);
+        const long long INF = 1e18;
+        vector<vector<long long>> dp(n + 1, vector<long long>(m + 1, INF));
+
+        for (int j = 0; j <= m; j++)
+            dp[0][j] = 0;
+
+        for (int j = 1; j <= m; j++) {
+            int pos = factory[j-1][0];
+            int limit = factory[j-1][1];
+
+            for (int i = 0; i <= n; i++) {
+                dp[i][j] = dp[i][j-1]; // skip factory
+
+                long long dist = 0;
+                for (int k = 1; k <= limit && i - k >= 0; k++) {
+                    dist += abs(robot[i-k] - pos);
+                    dp[i][j] = min(dp[i][j], dp[i-k][j-1] + dist);
+                }
+            }
+        }
+
+        return dp[n][m];
     }
 };
